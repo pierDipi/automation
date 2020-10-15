@@ -1,0 +1,27 @@
+# This is a basic workflow to help you get started with Actions
+
+name: cherry-pick-command
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
+on:
+  repository_dispatch:
+    types: [cherry-pick-command]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Output command and arguments
+        run: |
+          echo ${{ github.event.client_payload.slash_command.command }}
+          echo ${{ github.event.client_payload.slash_command.args.all }}
+          echo ${{ github.event.client_payload.slash_command.args.named.pr }}
+          echo ${{ github.event.client_payload.slash_command.args.named.fork }}
+          echo ${{ github.event.client_payload.slash_command.args.named.org }}
+          echo ${{ github.event.client_payload.slash_command.args.named.repo }}
