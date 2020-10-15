@@ -37,11 +37,13 @@ jobs:
           echo "body: ${BODY}"
           echo "merge commit sha: ${MERGE_COMMIT}"
           echo "base ref: ${BASE_REF}"
+          echo "use fork: ${USE_FORK}"
           
           echo "::set-output name=prTitle::${TITLE}"
           echo "::set-output name=prBody::${BODY}"
           echo "::set-output name=prMergeCommit::${MERGE_COMMIT}"
           echo "::set-output name=prBaseRef::${BASE_REF}"
+          echo "::set-output name=useFork::${USE_FORK}"
           
   pr:
     runs-on: ubuntu-latest
@@ -77,7 +79,7 @@ jobs:
           signoff: true
           base: '${{ github.event.client_payload.slash_command.args.named.branch }}'
           branch: '${{ github.event.client_payload.slash_command.args.named.branch }}-${{ github.event.client_payload.slash_command.args.named.pr }}'
-          push-to-fork: true
+          push-to-fork: ${{ needs.prContext.outputs.useFork }}
           delete-branch: true
           title: '[${{ github.event.client_payload.slash_command.args.named.branch }}] ${{ needs.prContext.outputs.prTitle }}'
           body: '${{ needs.prContext.outputs.prBody }}'
