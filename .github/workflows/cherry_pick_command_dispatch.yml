@@ -35,6 +35,7 @@ jobs:
           
   pr:
     runs-on: ubuntu-latest
+    needs: [prContext]
     steps:
       - name: Create PR
         id: prCreate
