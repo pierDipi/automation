@@ -24,7 +24,9 @@ jobs:
           
           shopt -s nocasematch
           USE_FORK=true
-          [[ ${{ github.event.client_payload.slash_command.args.named.org }} == "pierdipi ]] && USE_FORK=false
+          if [[ ${{ github.event.client_payload.slash_command.args.named.org }} = "pierdipi ]]; then
+            USE_FORK=false
+          fi
           
           readonly PR_URL="https://api.github.com/repos/${{ github.event.client_payload.slash_command.args.named.org }}/${{ github.event.client_payload.slash_command.args.named.repo }}/pulls/${{ github.event.client_payload.slash_command.args.named.pr }}"
           readonly PR=$(curl -s ${PR_URL})
