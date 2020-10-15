@@ -1,0 +1,64 @@
+# This is a basic workflow to help you get started with Actions
+
+name: cherry-pick-command
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
+on:
+  repository_dispatch:
+    types: [cherry-pick-command]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  prContext:
+    runs-on: ubuntu-latest
+    outputs:
+      prTitle: ${{ steps.prContext.outputs.prTitle }}
+      prBody: ${{ steps.prContext.outputs.prBody }}
+      prMergeCommit: ${{ steps.prContext.outputs.prMergeCommit }}
+    steps:
+      - id: prContext
+        run: |
+          readonly PR_URL="https://api.github.com/repos/${{ github.event.client_payload.slash_command.args.named.org }}/${{ github.event.client_payload.slash_command.args.named.repo }}/pulls/${{ github.event.client_payload.slash_command.args.named.pr }}"
+          readonly PR=$(curl -s ${PR_URL})
+          readonly BODY=$(echo ${PR} | jq .body)
+          readonly TITLE=$(echo ${PR} | jq .title)
+          readonly MERGE_COMMIT=$(echo ${PR} | jq .merge_commit_sha)
+          
+          echo "title: ${TITLE}"
+          echo "body: ${BODY}"
+          echo "merge commit sha: ${MERGE_COMMIT}"
+          
+          echo "::set-output name=prTitle::${TITLE}"
+          echo "::set-output name=prBody::${BODY}"
+          echo "::set-output name=prMergeCommit::${MERGE_COMMIT}"
+          
+  pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create PR
+        id: prCreate
+#         uses: peter-evans/create-pull-request@v3
+#         with:
+#           token: ${{ secrets.PAT }}
+#           commit-message: Update report
+#           committer: Pierangelo Di Pilato <pierangelodipilato@gmail.com>
+#           author: Pierangelo Di Pilato <pierangelodipilato@gmail.com>
+#           signoff: true
+#           base: '${{ github.event.client_payload.slash_command.args.named.branch }}'
+#           branch: '${{ github.event.client_payload.slash_command.args.named.repo }}${{ github.event.client_payload.slash_command.args.named.pr }}${{ github.event.client_payload.slash_command.args.named.branch }}'
+#           delete-branch: true
+#           title: '[${{ github.event.client_payload.slash_command.args.named.branch }}] ${{ steps.prContext.outputs.prTitle }}'
+#           body: '${{needs.prContext.outputs.prBody}}'
+        run: |
+          echo "command: ${{ github.event.client_payload.slash_command.command }}"
+          echo "all: ${{ github.event.client_payload.slash_command.args.all }}"
+          echo "branch: ${{ github.event.client_payload.slash_command.args.named.branch }}"
+          echo "pr: ${{ github.event.client_payload.slash_command.args.named.pr }}"
+          echo "fork: ${{ github.event.client_payload.slash_command.args.named.fork }}"
+          echo "org: ${{ github.event.client_payload.slash_command.args.named.org }}"
+          echo "repo: ${{ github.event.client_payload.slash_command.args.named.repo }}"
+          
+          echo "prTitle: ${{ steps.prContext.outputs.prTitle }}"
+          echo "prBody: ${{ steps.prContext.outputs.prBody }}"
+          echo "prMergeCommit: ${{ steps.prContext.outputs.prMergeCommit }}"
