@@ -59,6 +59,6 @@ jobs:
           echo "org: ${{ github.event.client_payload.slash_command.args.named.org }}"
           echo "repo: ${{ github.event.client_payload.slash_command.args.named.repo }}"
           
-          echo "prTitle: ${{ steps.prContext.outputs.prTitle }}"
-          echo "prBody: ${{ steps.prContext.outputs.prBody }}"
-          echo "prMergeCommit: ${{ steps.prContext.outputs.prMergeCommit }}"
+          echo "prTitle: ${{ needs.prContext.outputs.prTitle }}"
+          echo "prBody: ${{ needs.prContext.outputs.prBody }}"
+          echo "prMergeCommit: ${{ needs.prContext.outputs.prMergeCommit }}"
