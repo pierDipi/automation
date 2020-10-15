@@ -28,10 +28,10 @@ jobs:
 
           readonly PR_URL="https://api.github.com/repos/${{ github.event.client_payload.slash_command.args.named.org }}/${{ github.event.client_payload.slash_command.args.named.repo }}/pulls/${{ github.event.client_payload.slash_command.args.named.pr }}"
           readonly PR=$(curl -s ${PR_URL})
-          readonly BODY=$(echo ${PR} | jq .body)
-          readonly TITLE=$(echo ${PR} | jq .title)
-          readonly MERGE_COMMIT=$(echo ${PR} | jq .merge_commit_sha)
-          readonly BASE_REF=$(echo ${PR} | jq .base.ref)
+          readonly BODY=$(echo ${PR} | jq -r .body)
+          readonly TITLE=$(echo ${PR} | jq -r .title)
+          readonly MERGE_COMMIT=$(echo ${PR} | jq -r .merge_commit_sha)
+          readonly BASE_REF=$(echo ${PR} | jq -r .base.ref)
           
           echo "title: ${TITLE}"
           echo "body: ${BODY}"
