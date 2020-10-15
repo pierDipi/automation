@@ -17,9 +17,14 @@ jobs:
       prBody: ${{ steps.prContext.outputs.prBody }}
       prMergeCommit: ${{ steps.prContext.outputs.prMergeCommit }}
       prBaseRef: ${{ steps.prContext.outputs.prBaseRef }}
+      pushFork: ${{ steps.prContext.outputs.pushFork }}
     steps:
       - id: prContext
         run: |
+
+          shopt -s nocasematch
+          FORK=pierDipi/${{ github.event.client_payload.slash_command.args.named.fork }}
+          [[ ${{ github.event.client_payload.slash_command.args.named.org }} = "pierdipi" ]] && FORK=""
 
           readonly PR_URL="https://api.github.com/repos/${{ github.event.client_payload.slash_command.args.named.org }}/${{ github.event.client_payload.slash_command.args.named.repo }}/pulls/${{ github.event.client_payload.slash_command.args.named.pr }}"
           readonly PR=$(curl -s ${PR_URL})
@@ -38,6 +43,7 @@ jobs:
           echo "::set-output name=prBody::${BODY}"
           echo "::set-output name=prMergeCommit::${MERGE_COMMIT}"
           echo "::set-output name=prBaseRef::${BASE_REF}"
+          echo "::set-output name=pushFork::${FORK}"
           
   pr:
     runs-on: ubuntu-latest
@@ -75,7 +81,7 @@ jobs:
           signoff: true
           base: '${{ github.event.client_payload.slash_command.args.named.branch }}'
           branch: '${{ github.event.client_payload.slash_command.args.named.branch }}-${{ github.event.client_payload.slash_command.args.named.pr }}'
-          push-to-fork: pierDipi/${{ github.event.client_payload.slash_command.args.named.fork }}
+          push-to-fork: '${{ needs.prContext.outputs.pushFork }}' 
           delete-branch: true
           title: '[${{ github.event.client_payload.slash_command.args.named.branch }}] ${{ needs.prContext.outputs.prTitle }}'
           body: '${{ needs.prContext.outputs.prBody }}'
