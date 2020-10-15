@@ -24,7 +24,7 @@ jobs:
           
           shopt -s nocasematch
           USE_FORK=true
-          if [[ ${{ github.event.client_payload.slash_command.args.named.org }} = "pierdipi ]]; then
+          if [ ${{ github.event.client_payload.slash_command.args.named.org }} = "pierdipi" ]; then
             USE_FORK=false
           fi
           
