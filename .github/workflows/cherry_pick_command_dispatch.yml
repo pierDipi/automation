@@ -17,9 +17,14 @@ jobs:
       prBody: ${{ steps.prContext.outputs.prBody }}
       prMergeCommit: ${{ steps.prContext.outputs.prMergeCommit }}
       prBaseRef: ${{ steps.prContext.outputs.prBaseRef }}
+      useFork: ${{ steps.prContext.outputs.useFork }}
     steps:
       - id: prContext
         run: |
+          
+          shopt -s nocasematch
+          USE_FORK=true
+          [[ ${{ github.event.client_payload.slash_command.args.named.org }} == "pierdipi ]] && USE_FORK=false
           
           readonly PR_URL="https://api.github.com/repos/${{ github.event.client_payload.slash_command.args.named.org }}/${{ github.event.client_payload.slash_command.args.named.repo }}/pulls/${{ github.event.client_payload.slash_command.args.named.pr }}"
           readonly PR=$(curl -s ${PR_URL})
