@@ -67,9 +67,7 @@ jobs:
           echo "${{ needs.prContext.outputs.prBaseRef }} ${{ needs.prContext.outputs.prMergeCommit }}"
           git remote add upstream https://github.com/${{ github.event.client_payload.slash_command.args.named.org }}/${{ github.event.client_payload.slash_command.args.named.repo }}
           git fetch --all
-          git checkout -b ${{ github.event.client_payload.slash_command.args.named.branch }}-${{ github.event.client_payload.slash_command.args.named.pr }}
           git cherry-pick ${{ needs.prContext.outputs.prMergeCommit }} 
-          git reset HEAD~1
           
       - name: Create PR
         id: prCreate
@@ -80,7 +78,6 @@ jobs:
           committer: Pierangelo Di Pilato <pierangelodipilato@gmail.com>
           author: Pierangelo Di Pilato <pierangelodipilato@gmail.com>
           signoff: true
-          base: '${{ github.event.client_payload.slash_command.args.named.branch }}'
           branch: '${{ github.event.client_payload.slash_command.args.named.branch }}-${{ github.event.client_payload.slash_command.args.named.pr }}'
           push-to-fork: '${{ needs.prContext.outputs.pushFork }}' 
           delete-branch: true
