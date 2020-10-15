@@ -56,7 +56,7 @@ jobs:
           git remote add upstream https://github.com/${{ github.event.client_payload.slash_command.args.named.org }}/${{ github.event.client_payload.slash_command.args.named.repo }}
           git fetch --all
           git checkout -b ${{ github.event.client_payload.slash_command.args.named.branch }}-${{ github.event.client_payload.slash_command.args.named.pr }}
-          git cherry-pick ${{ needs.prContext.outputs.prBaseRef }} ${{ needs.prContext.outputs.prMergeCommit }} 
+          git cherry-pick ${{ needs.prContext.outputs.prMergeCommit }} 
           
       - name: Create PR
         id: prCreate
