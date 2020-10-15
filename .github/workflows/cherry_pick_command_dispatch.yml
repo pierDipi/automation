@@ -52,6 +52,9 @@ jobs:
       - id: cherry-pick
         name: Cherry-pick  
         run: |
+          git config --global user.email "pierangelodipilato@gmail.com"
+          git config --global user.name "Pierangelo Di Pilato"
+          
           echo "${{ needs.prContext.outputs.prBaseRef }} ${{ needs.prContext.outputs.prMergeCommit }}"
           git remote add upstream https://github.com/${{ github.event.client_payload.slash_command.args.named.org }}/${{ github.event.client_payload.slash_command.args.named.repo }}
           git fetch --all
