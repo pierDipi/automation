@@ -1,0 +1,46 @@
+name: Debug Knative logs
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch Name? (empty for default branch of the respective repository)'
+
+#       release:
+#         description: 'Release? (vX.Y) defaults to current release'
+
+#       reason:
+#         description: "Justification?"
+#         required: true
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.15
+        
+    - name: Install gsutil
+      run: |
+        set -e
+        echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+        sudo apt-get -y install apt-transport-https ca-certificates gnupg
+        curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+        sudo apt-get -y update && sudo apt-get -y install google-cloud-sdk
+
+
+    - name: Download artifacts
+      run: |
+        set -e
+        
+        gsutil -m cp -r \
+          "gs://knative-prow/pr-logs/pull/knative-sandbox_eventing-kafka-broker/705/pull-knative-sandbox-eventing-kafka-broker-integration-tests/1368155664039284736/artifacts/cd94a723-7e6b-11eb-bce1-8a835f25e258/knative-eventing/" \
+          "gs://knative-prow/pr-logs/pull/knative-sandbox_eventing-kafka-broker/705/pull-knative-sandbox-eventing-kafka-broker-integration-tests/1368155664039284736/artifacts/cd94a723-7e6b-11eb-bce1-8a835f25e258/sacura/" \
+          .
+        
+        ls -lR
