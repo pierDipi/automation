@@ -46,5 +46,7 @@ jobs:
       - name: Download artifacts
         run: go run cmd/sacura/sacura_logs.go
 
-      - name: Output
-        run: cat ${OUT_PATH}
+      - uses: actions/upload-artifact@v2
+        name: Upload Output
+        with:
+          path: ${{ env.OUT_PATH }}
