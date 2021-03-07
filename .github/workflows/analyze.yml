@@ -12,7 +12,7 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     env:
-      SACURA_LOG_PATH: "./sacura/sacura/sacura-vcnvm-sacura.log"
+      SACURA_LOG_PATH: "./sacura/sacura/"
       COMPONENTS_PATHS: "./knative-eventing/kafka-broker-dispatcher,./knative-eventing/kafka-broker-receiver"
       OUT_PATH: "./out.json"
     steps:
