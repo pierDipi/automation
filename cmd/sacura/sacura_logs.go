@@ -65,7 +65,7 @@ type EventHistory struct {
 type HistoryBySymbol map[string][]EventHistory
 
 type History struct {
-	HistoryBySymbol
+	HistoryBySymbol HistoryBySymbol `json:"history_by_symbol"`
 }
 
 type SacuraLogParser struct {
@@ -138,20 +138,23 @@ func NewSingleFileHistoryFinder(path string) (*SingleFileHistoryFinder, error) {
 	out := make([]string, len(lines))
 	for _, l := range lines {
 		count := 0
-		for c := range []rune(l) {
+		for _, c := range []rune(l) {
 			if c == '-' {
 				count++
 			}
 			if count >= 4 {
-				out = append(out, l)
+				break
 			}
+		}
+		if count >= 4 {
+			out = append(out, l)
 		}
 	}
 	return &SingleFileHistoryFinder{lines: out}, nil
 }
 
 func (sf *SingleFileHistoryFinder) Find(id string) (EventHistory, error) {
-	history := make([]string, 5)
+	history := make([]string, 0, 5)
 	for _, l := range sf.lines {
 		if strings.Contains(l, id) {
 			history = append(history, l)
@@ -165,7 +168,7 @@ type MultiFileHistoryFinder []HistoryFinder
 func (mf MultiFileHistoryFinder) Find(id string) (EventHistory, error) {
 	history := EventHistory{
 		ID:      id,
-		History: make([]string, 5*len(mf)),
+		History: make([]string, 0, 5*len(mf)),
 	}
 	for _, f := range mf {
 		h, err := f.Find(id)

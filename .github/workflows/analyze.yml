@@ -3,9 +3,9 @@ name: Debug Knative logs
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: 'Branch Name? (empty for default branch of the respective repository)'
-        required: false
+      gsutil:
+        description: 'gsutil command'
+        required: true
 
 jobs:
 
@@ -36,10 +36,7 @@ jobs:
         run: |
           set -e
 
-          gsutil -m cp -r \
-            "gs://knative-prow/pr-logs/pull/knative-sandbox_eventing-kafka-broker/705/pull-knative-sandbox-eventing-kafka-broker-integration-tests/1368155664039284736/artifacts/cd94a723-7e6b-11eb-bce1-8a835f25e258/knative-eventing/" \
-            "gs://knative-prow/pr-logs/pull/knative-sandbox_eventing-kafka-broker/705/pull-knative-sandbox-eventing-kafka-broker-integration-tests/1368155664039284736/artifacts/cd94a723-7e6b-11eb-bce1-8a835f25e258/sacura/" \
-            .
+          ${{ github.event.inputs.gsutil }}
 
           ls -lR
 
