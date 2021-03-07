@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/kelseyhightower/envconfig"
@@ -39,8 +40,25 @@ func run() error {
 		finders = append(finders, finder)
 	}
 
+	sacuraLogFile := ""
+	err := filepath.Walk(cfg.SacuraLogPath, func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() {
+			return nil
+		}
+		if sacuraLogFile == "" {
+			sacuraLogFile = path
+		}
+		return nil
+	})
+	if err != nil {
+		return fmt.Errorf("failed to find sacura log file: %w", err)
+	}
+	if sacuraLogFile == "" {
+		return fmt.Errorf("no file found in %s", cfg.SacuraLogPath)
+	}
+
 	parser := SacuraLogParser{HistoryFinder: MultiFileHistoryFinder(finders)}
-	history, err := parser.Parse(cfg.SacuraLogPath)
+	history, err := parser.Parse(sacuraLogFile)
 	if err != nil {
 		return err
 	}
