@@ -7,20 +7,14 @@ on:
         description: 'Branch Name? (empty for default branch of the respective repository)'
         required: false
 
-#       release:
-#         description: 'Release? (vX.Y) defaults to current release'
-
-#       reason:
-#         description: "Justification?"
-#         required: true
-
 jobs:
 
   analyze:
     runs-on: ubuntu-latest
     env:
-      SACURA_LOG_PATHS: "./sacura/sacura/sacura-vcnvm-sacura.log"
+      SACURA_LOG_PATH: "./sacura/sacura/sacura-vcnvm-sacura.log"
       COMPONENTS_PATHS: "./knative-eventing/kafka-broker-dispatcher,./knative-eventing/kafka-broker-receiver"
+      OUT_PATH: "./out.json"
     steps:
       - uses: actions/checkout@v2
 
@@ -50,5 +44,7 @@ jobs:
           ls -lR
 
       - name: Download artifacts
-        run: |
-          go run cmd/sacura/main.go
+        run: go run cmd/sacura/sacura_logs.go
+
+      - name: Output
+        run: cat ${OUT_PATH}
