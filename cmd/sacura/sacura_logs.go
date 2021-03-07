@@ -42,6 +42,9 @@ func run() error {
 
 	sacuraLogFile := ""
 	err := filepath.Walk(cfg.SacuraLogPath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 		if info.IsDir() {
 			return nil
 		}
@@ -50,7 +53,7 @@ func run() error {
 		}
 		return nil
 	})
-	if err != nil {
+	if err != nil && sacuraLogFile == "" {
 		return fmt.Errorf("failed to find sacura log file: %w", err)
 	}
 	if sacuraLogFile == "" {
